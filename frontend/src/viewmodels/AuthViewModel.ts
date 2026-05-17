@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth, googleProvider } from '../lib/firebase';
 import { useRouter } from 'next/navigation';
 
@@ -29,8 +29,23 @@ export function useAuthViewModel() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || "Failed to login");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to login";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signUpWithEmail = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to sign up";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -42,8 +57,9 @@ export function useAuthViewModel() {
     try {
       await signInWithPopup(auth, googleProvider);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || "Failed to login with Google");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to login with Google";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -63,7 +79,9 @@ export function useAuthViewModel() {
     error,
     loading,
     loginWithEmail,
+    signUpWithEmail,
     loginWithGoogle,
     logout
   };
 }
+

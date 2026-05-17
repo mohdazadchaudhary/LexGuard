@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+/** Base URL for the LexGuard FastAPI backend. Configurable via env for deployments. */
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8000';
+
 export const useAnalysisViewModel = () => {
   const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -12,7 +15,7 @@ export const useAnalysisViewModel = () => {
 
   const analyzeDocument = async () => {
     if (!text.trim() && !file) {
-      setError('Please provide text or upload a PDF to analyze.');
+      setError('Please provide text or upload a file to analyze.');
       return;
     }
 
@@ -27,13 +30,13 @@ export const useAnalysisViewModel = () => {
         // Upload file
         const formData = new FormData();
         formData.append('file', file);
-        response = await fetch('http://localhost:8000/api/v1/analysis/upload', {
+        response = await fetch(`${BACKEND_URL}/api/v1/analysis/upload`, {
           method: 'POST',
           body: formData,
         });
       } else {
         // Send text
-        response = await fetch('http://localhost:8000/api/v1/analysis/analyze', {
+        response = await fetch(`${BACKEND_URL}/api/v1/analysis/analyze`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -52,8 +55,9 @@ export const useAnalysisViewModel = () => {
       if (data.extracted_text) {
         setText(data.extracted_text);
       }
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred during analysis.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during analysis.';
+      setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -68,7 +72,7 @@ export const useAnalysisViewModel = () => {
     setIsChatting(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/analysis/chat', {
+      const response = await fetch(`${BACKEND_URL}/api/v1/analysis/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +86,7 @@ export const useAnalysisViewModel = () => {
 
       const data = await response.json();
       setChatMessages((prev) => [...prev, { sender: 'bot', text: data.answer }]);
-    } catch (err: any) {
+    } catch {
       setChatMessages((prev) => [...prev, { sender: 'bot', text: 'Error: Failed to fetch answer.' }]);
     } finally {
       setIsChatting(false);

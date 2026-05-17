@@ -46,3 +46,4 @@ LexGuard is an AI-powered contract intelligence platform. It uses a separated fr
 ## Key Decisions & Workflows
 - **Authentication:** Managed via Firebase Auth on the client, with token verification on the backend.
 - **Multi-Agent Approach:** Work is strictly divided into Frontend (Views/ViewModels), Backend (API/Services), and AI (Orchestration/LLM models).
+- **Design System Integration:** Implemented the "Alexandria — High-End Editorial" premium design theme from Google Stitch (ID: 1499292417373458246). Adheres strictly to the "No-Line Rule" (replacing 1px borders with Ghost Borders `border-outline-variant/15` or background tier transitions), custom Noto Serif / Inter / Public Sans typographic hierarchy, premium gradient CTA buttons, and interactive micro-animations.

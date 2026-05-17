@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from 'react';
 import { useAuthViewModel } from '@/viewmodels/AuthViewModel';
 
 export default function LoginPage() {
+  const [isSignUp, setIsSignUp] = useState(false);
   const {
     email,
     setEmail,
@@ -11,6 +13,7 @@ export default function LoginPage() {
     error,
     loading,
     loginWithEmail,
+    signUpWithEmail,
     loginWithGoogle
   } = useAuthViewModel();
 
@@ -49,12 +52,16 @@ export default function LoginPage() {
         
         <div className="w-full max-w-md">
           <div className="mb-10">
-            <h2 className="font-headline text-3xl font-semibold text-on-surface mb-2">Welcome back</h2>
-            <p className="text-on-surface-variant font-body">Welcome to your private legal advisor.</p>
+            <h2 className="font-headline text-3xl font-semibold text-on-surface mb-2">
+              {isSignUp ? "Create an account" : "Welcome back"}
+            </h2>
+            <p className="text-on-surface-variant font-body">
+              {isSignUp ? "Sign up to begin your secure contract research." : "Welcome to your private legal advisor."}
+            </p>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-lg border border-red-100">
+            <div className="mb-4 p-3 text-sm text-error bg-error-container/20 rounded-xl border border-error/15">
               {error}
             </div>
           )}
@@ -65,7 +72,7 @@ export default function LoginPage() {
             <button 
               onClick={loginWithGoogle}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-200 outline-variant/15 outline outline-1 rounded-xl group disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-lowest hover:bg-surface-container-low hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 border border-outline-variant/15 rounded-xl group disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
@@ -78,19 +85,19 @@ export default function LoginPage() {
 
             <div className="relative py-4">
               <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-outline-variant/30"></div>
+                <div className="w-full border-t border-outline-variant/15"></div>
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 paper-texture text-on-surface-variant font-label tracking-widest uppercase">Or email intelligence</span>
+                <span className="px-3 paper-texture text-on-surface-variant font-label tracking-widest uppercase">Or email credentials</span>
               </div>
             </div>
 
             {/* Email Form */}
-            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); loginWithEmail(); }}>
+            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); if (isSignUp) { signUpWithEmail(); } else { loginWithEmail(); } }}>
               <div>
                 <label className="block font-label text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2" htmlFor="email">Institutional Email</label>
                 <input 
-                  className="block w-full px-4 py-3 bg-surface-container-lowest border-0 ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary rounded-xl text-on-surface transition-all" 
+                  className="block w-full px-4 py-3 bg-surface-container-lowest border-0 ring-1 ring-outline-variant/15 focus:ring-2 focus:ring-primary rounded-xl text-on-surface transition-all" 
                   id="email" 
                   name="email" 
                   placeholder="name@lexguard.com" 
@@ -105,10 +112,10 @@ export default function LoginPage() {
               <div>
                 <div className="flex justify-between mb-2">
                   <label className="block font-label text-xs font-semibold text-on-surface-variant uppercase tracking-wider" htmlFor="password">Access Code</label>
-                  <a className="font-label text-xs text-primary hover:underline underline-offset-4 tracking-wide uppercase" href="#">Forgot?</a>
+                  {!isSignUp && <a className="font-label text-xs text-primary hover:underline underline-offset-4 tracking-wide uppercase" href="#">Forgot?</a>}
                 </div>
                 <input 
-                  className="block w-full px-4 py-3 bg-surface-container-lowest border-0 ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary rounded-xl text-on-surface transition-all" 
+                  className="block w-full px-4 py-3 bg-surface-container-lowest border-0 ring-1 ring-outline-variant/15 focus:ring-2 focus:ring-primary rounded-xl text-on-surface transition-all" 
                   id="password" 
                   name="password" 
                   placeholder="••••••••" 
@@ -120,26 +127,35 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="flex items-center">
-                <input className="h-4 w-4 text-primary focus:ring-primary border-outline-variant rounded-sm" id="remember-me" name="remember-me" type="checkbox"/>
-                <label className="ml-2 block text-sm text-on-surface-variant font-body" htmlFor="remember-me">
-                  Keep session active for research
-                </label>
-              </div>
+              {!isSignUp && (
+                <div className="flex items-center">
+                  <input className="h-4 w-4 text-primary focus:ring-primary border-outline-variant/30 rounded-md" id="remember-me" name="remember-me" type="checkbox"/>
+                  <label className="ml-2 block text-sm text-on-surface-variant font-body" htmlFor="remember-me">
+                    Keep session active for research
+                  </label>
+                </div>
+              )}
 
               <button 
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-label font-bold tracking-widest uppercase text-sm rounded-xl hover:opacity-90 transform active:scale-[0.98] transition-all duration-200 disabled:opacity-50" 
+                className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-label font-bold tracking-widest uppercase text-sm rounded-xl hover:opacity-95 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-200 disabled:opacity-50" 
                 type="submit"
               >
-                Enter Archive
+                {isSignUp ? "Create Account" : "Enter Archive"}
               </button>
             </form>
           </div>
           
           <div className="mt-10 text-center">
             <p className="text-sm text-on-surface-variant font-body">
-              New to LexGuard? <a className="text-primary font-semibold hover:underline underline-offset-4" href="#">Request digital access</a>
+              {isSignUp ? "Already have an account?" : "New to LexGuard?"}{" "}
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-primary font-semibold hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer"
+              >
+                {isSignUp ? "Sign In" : "Request digital access"}
+              </button>
             </p>
           </div>
         </div>

@@ -43,14 +43,27 @@ async def upload_and_analyze(
     service: AnalysisService = Depends(get_analysis_service)
 ):
     """
-    Uploads a PDF, extracts text, and analyzes it.
+    Uploads a document (PDF, DOCX, TXT, or Image), extracts text, and analyzes it.
     """
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+    filename = file.filename.lower()
+    allowed_extensions = (".pdf", ".docx", ".txt", ".png", ".jpg", ".jpeg")
+    if not filename.endswith(allowed_extensions):
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported file format. Only PDF, DOCX, TXT, and Image (PNG/JPG) are supported."
+        )
     
     try:
         contents = await file.read()
-        text = service.extract_text_from_pdf(contents)
+        if filename.endswith(".pdf"):
+            text = service.extract_text_from_pdf(contents)
+        elif filename.endswith(".docx"):
+            text = service.extract_text_from_docx(contents)
+        elif filename.endswith((".png", ".jpg", ".jpeg")):
+            text = await service.extract_text_from_image_async(contents)
+        else: # .txt
+            text = service.extract_text_from_txt(contents)
+            
         result = await service.process_document_text(text)
         return AnalysisResponse(analysis=result, extracted_text=text)
     except ValueError as ve:
