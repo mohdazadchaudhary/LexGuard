@@ -15,3 +15,10 @@
 - [x] Define global architecture documentation (architecture.md).
 - [x] Connect Firebase Auth state to app routing (Protected Dashboard).
 - [x] Build Frontend Analysis View and ViewModel.
+
+## Phase 3: Document Parsing & Advanced UI
+- [x] Implement PDF Parsing in Backend (PyMuPDF).
+- [x] Add File Upload endpoints to FastAPI.
+- [x] Update Dashboard UI and AnalysisViewModel to support PDF file uploads.
+- [x] Implement Multi-Agent architecture (concurrent Financial, Liability, and Privacy AI Agents).
+- [x] Implement Conversational Document Chatbot (Q&A RAG Interface) in both Backend & Frontend.

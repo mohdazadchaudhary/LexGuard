@@ -33,6 +33,42 @@ class GeminiClient:
             # Handle potential API errors gracefully
             raise RuntimeError(f"Error during Gemini API call: {str(e)}")
 
+    async def _run_agent_async(self, role_prompt: str, text: str) -> str:
+        prompt = f"{role_prompt}\n\nContract Text:\n{text}"
+        response = await self.model.generate_content_async(prompt)
+        return response.text
+
+    async def agent_financial_async(self, text: str) -> str:
+        role = "You are the Financial Risk AI Agent. Analyze the contract strictly for financial liabilities, hidden fees, auto-renewals, and unfair payment terms. Output your findings in a concise markdown format, using bullet points."
+        return await self._run_agent_async(role, text)
+
+    async def agent_liability_async(self, text: str) -> str:
+        role = "You are the Legal Liability AI Agent. Analyze the contract strictly for indemnification clauses, one-sided arbitration, termination penalties, and liability waivers. Output your findings in a concise markdown format, using bullet points."
+        return await self._run_agent_async(role, text)
+
+    async def agent_privacy_async(self, text: str) -> str:
+        role = "You are the Privacy & Data Security AI Agent. Analyze the contract strictly for excessive data collection, intellectual property transfers, and privacy violations. Output your findings in a concise markdown format, using bullet points."
+        return await self._run_agent_async(role, text)
+
+    async def chat_with_contract_async(self, text: str, question: str) -> str:
+        """Allows conversational Q&A against the contract text."""
+        prompt = f"""
+        You are a highly knowledgeable Legal Assistant AI.
+        Below is the text of a contract. Based ONLY on the contract text provided, answer the user's question clearly, concisely, and accurately.
+        If the contract does not contain information to answer the question, state that clearly.
+
+        Contract Text:
+        {text}
+
+        User Question:
+        {question}
+        """
+        try:
+            response = await self.model.generate_content_async(prompt)
+            return response.text
+        except Exception as e:
+            raise RuntimeError(f"Error during Gemini Chat API call: {str(e)}")
+
 # Singleton instance
 gemini_client = None
 
