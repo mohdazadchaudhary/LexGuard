@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #faf9fa;
+  --foreground: #1b1c1d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1b1c1d;
+    --foreground: #faf9fa;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .paper-texture {
+    background-color: #faf9fa;
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB8c_SZ8bAemej2BppjTtUvSBD_CWZc7wxA_YKGHnOVIF91gTkn-ljWQuqOn9SuhUWyWHg6GC2P6gNs9eHJ6pKGLIjcAxABjGhgQar9EojzcpOiKvOh5o6FbPVdxAFYRH4AMI7Lfleh0KWfUDkNw8Xaq5uSJchqwP1-iGqmMs1oEmImcc_NelBlfx6-gp1F1_v1E1NdF77L8GQP8GLxJRYHaykHt7Pnk5qr-D6sHGl6qR_P_jnzxq_-wpgj-W6IKDaB3s9wDw0Al0A");
+  }
+  
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+}
